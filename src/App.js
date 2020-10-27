@@ -7,6 +7,7 @@ import {
   Link
 } from "react-router-dom";
 import Chatrooms from "./pages/Chatrooms";
+import Users from "./pages/Users";
 
 export default function App() {
   return (
@@ -56,10 +57,3 @@ function Home() {
   );
 }
 
-function About() {
-  return <h2>About</h2>;
-}
-
-function Users() {
-  return <h2>Users</h2>;
-}
