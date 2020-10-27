@@ -8,7 +8,7 @@ import {
 import Chatrooms from "./pages/Chatrooms";
 import Users from "./pages/Users";
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { AppBar, IconButton, Toolbar, Typography, Drawer, Divider, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
+import { AppBar, IconButton, Toolbar, Typography, Drawer, Divider, List, ListItem, ListItemIcon, ListItemText, Container } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import UserIcon from "@material-ui/icons/People";
@@ -64,14 +64,16 @@ export default function App() {
         </List>
       </Drawer>
 
-      <Switch>
-        <Route path="/users">
-          <Users />
-        </Route>
-        <Route path="/">
-          <Chatrooms />
-        </Route>
-      </Switch>
+      <Container>
+        <Switch>
+          <Route path="/users">
+            <Users />
+          </Route>
+          <Route path="/">
+            <Chatrooms />
+          </Route>
+        </Switch>
+      </Container>
     </Router>
   );
 }
