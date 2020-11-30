@@ -19,10 +19,10 @@ const ChatroomsDisplay = ({ chatrooms, address }) => (
     <AccordionDetails>
       <List style={{ width: "100%" }}>
         {chatrooms.map((chatroom) => (
-          <>
+          <React.Fragment key={chatroom}>
             <ListItem>{chatroom}</ListItem>
             <Divider />
-          </>
+          </React.Fragment>
         ))}
       </List>
     </AccordionDetails>

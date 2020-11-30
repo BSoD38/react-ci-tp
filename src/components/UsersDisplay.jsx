@@ -21,7 +21,7 @@ const UsersDisplay = ({ users, address }) => (
     <AccordionDetails>
       <List style={{ width: "100%" }}>
         {users.map((user) => (
-          <>
+          <React.Fragment key={user.account.id}>
             <ListItem>
               <ListItemText
                 primary={user.account.username}
@@ -29,7 +29,7 @@ const UsersDisplay = ({ users, address }) => (
               />
             </ListItem>
             <Divider />
-          </>
+          </React.Fragment>
         ))}
       </List>
     </AccordionDetails>
