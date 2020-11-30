@@ -1,8 +1,9 @@
 import { makeStyles, Typography, Grid } from "@material-ui/core";
 import { useEffect, useState, React } from "react";
-import ChatroomCounter from "../components/ChatroomCounter";
-import ChatroomsDisplay from "../components/ChatroomsDisplay";
+import UserCounter from "../components/UserCounter";
+import UsersDisplay from "../components/UsersDisplay";
 import servers from "../servers";
+import User from "../models/User";
 
 const useStyle = makeStyles({
   title: {
@@ -15,16 +16,23 @@ const useStyle = makeStyles({
 
 const Users = () => {
   const classes = useStyle();
-  const [usersServers, setUsersServers] = useState([[]]);
+  const [userServers, setUserServers] = useState({});
   const updateUsers = async () => {
-    Object.keys(servers).forEach(async (server) => {
-      const res = await fetch(`${servers[server]}/users`);
-      if (res.ok) {
-        const buf = [...usersServers];
-        buf[server] = await res.json();
-        setUsersServers(buf);
-      }
+    const results = [];
+    for (const server of servers) {
+      results.push(fetch(`${server}/users`));
+    }
+    const data = await Promise.all(results);
+    const jsonData = [];
+    for (const request of data) {
+      jsonData.push(request.json());
+    }
+    const finalData = await Promise.all(jsonData);
+    const ret = {};
+    Object.keys(servers).forEach((key) => {
+      ret[servers[key]] = User.constructMultiple(finalData[key]);
     });
+    setUserServers(ret);
   };
 
   useEffect(() => {
@@ -43,27 +51,19 @@ const Users = () => {
         Number of users
       </Typography>
       <Grid container spacing={3}>
-        {usersServers.map((users, index) => (
-          <ChatroomCounter
-            chatrooms={users}
-            address={servers[index]}
-            key={servers[index]}
-          />
+        {Object.entries(userServers).map(([index, users]) => (
+          <UserCounter users={users} address={index} key={index} />
         ))}
       </Grid>
       <Typography
         component="h1"
         variant="h4"
-        className={[classes.title, classes.spacer]}
+        className={`${classes.title} ${classes.spacer}`}
       >
-        users names
+        User names
       </Typography>
-      {usersServers.map((users, index) => (
-        <ChatroomsDisplay
-          chatrooms={users}
-          address={servers[index]}
-          key={servers[index]}
-        />
+      {Object.entries(userServers).map(([index, users]) => (
+        <UsersDisplay users={users} address={index} key={index} />
       ))}
     </>
   );

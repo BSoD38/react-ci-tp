@@ -15,16 +15,23 @@ const useStyle = makeStyles({
 
 const Chatrooms = () => {
   const classes = useStyle();
-  const [chatroomServers, setChatroomServers] = useState([[]]);
+  const [chatroomServers, setChatroomServers] = useState({});
   const updateChatrooms = async () => {
-    Object.keys(servers).forEach(async (server) => {
-      const res = await fetch(`${servers[server]}/chatrooms`);
-      if (res.ok) {
-        const buf = [...chatroomServers];
-        buf[server] = await res.json();
-        setChatroomServers(buf);
-      }
+    const results = [];
+    for (const server of servers) {
+      results.push(fetch(`${server}/chatrooms`));
+    }
+    const data = await Promise.all(results);
+    const jsonData = [];
+    for (const request of data) {
+      jsonData.push(request.json());
+    }
+    const finalData = await Promise.all(jsonData);
+    const ret = {};
+    Object.keys(servers).forEach((key) => {
+      ret[servers[key]] = finalData[key];
     });
+    setChatroomServers(ret);
   };
 
   useEffect(() => {
@@ -43,27 +50,19 @@ const Chatrooms = () => {
         Number of chatrooms
       </Typography>
       <Grid container spacing={3}>
-        {chatroomServers.map((chatrooms, index) => (
-          <ChatroomCounter
-            chatrooms={chatrooms}
-            address={servers[index]}
-            key={servers[index]}
-          />
+        {Object.entries(chatroomServers).map(([index, chatrooms]) => (
+          <ChatroomCounter chatrooms={chatrooms} address={index} key={index} />
         ))}
       </Grid>
       <Typography
         component="h1"
         variant="h4"
-        className={[classes.title, classes.spacer]}
+        className={`${classes.title} ${classes.spacer}`}
       >
         Chatroom names
       </Typography>
-      {chatroomServers.map((chatrooms, index) => (
-        <ChatroomsDisplay
-          chatrooms={chatrooms}
-          address={servers[index]}
-          key={servers[index]}
-        />
+      {Object.entries(chatroomServers).map(([index, chatrooms]) => (
+        <ChatroomsDisplay chatrooms={chatrooms} address={index} key={index} />
       ))}
     </>
   );
